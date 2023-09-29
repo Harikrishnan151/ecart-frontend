@@ -1,0 +1,160 @@
+<!-- cart with product-->
+
+<div class="container mt-3" *ngIf="allCart.length!=0">
+    <div class="row">
+        <div class="col">
+            <!-- table -->
+            <table class="table align-middle mb-0 bg-white mt-4">
+                <thead class="bg-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let cart of allCart">
+                        <td>{{cart.id}}</td>
+                        <td>{{cart.title}}</td>
+                        <td><img width="100Px" [src]="cart.image" alt=""></td>
+                        <td>
+                            <div class=" d-flex">
+                                <button (click)="incrementCartProduct(cart.id)" class="btn">+</button>
+                                <input style="width:40px;" type="text" class="form-control" readonly
+                                    [value]="cart.quantity">
+                                <button (click)="decrementCartProduct(cart.id)" class="btn">-</button>
+                            </div>
+                        </td>
+                        <td>{{cart.price}}</td>
+                        <td>
+                            <button (click)="deleteCartItem(cart.id)" class="btn">
+                                <i class="fa-solid fa-trash fa-beat" style="color: #fd0d0d;"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col border p-5 shadow ms-2">
+            <!-- summery -->
+            <h3>Product Bill</h3>
+            <h3>Price : {{cartTotalPrice}}</h3>
+            <!-- <h3>Discount : 20%</h3> -->
+
+            <h1>Grand Total : {{cartTotalPrice}}</h1>
+
+            <div class="text-center">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Check
+                    Out</button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel "></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" >
+                           
+                            <form action="" [formGroup]="addressForm" (ngSubmit)="submitForm()" *ngIf="!proceedToPaymentStatus">
+                                <!-- name -->
+                                <h4>Enter Your Delivery Details</h4>
+                                <div class="form-floating mb-3">
+                                    <input name="name" formControlName="name" type="text" class="form-control" placeholder="Name">
+                                    <label for="">Name</label>
+                                </div>
+                                <!-- house number -->
+                                <div class="form-floating mb-3">
+                                    <input required name="houseNumber" formControlName="houseNumber" type="text" class="form-control" placeholder="House Number">
+                                    <label for="">House Number</label>
+                                </div>
+                                <!-- street name -->
+                                <div class="form-floating mb-3">
+                                    <input required name="streetName" formControlName="streetName" type="text" class="form-control" placeholder="Street Name">
+                                    <label for="">Street Name</label>
+                                </div>
+                                <!-- state -->
+                                <div class="form-floating mb-3">
+                                    <input required name="state" formControlName="state" type="text" class="form-control" placeholder="State">
+                                    <label for="">State</label>
+                                </div>
+                                <!-- Pincode -->
+                                <div class="form-floating mb-3">
+                                    <input required name="pincode" formControlName="pincode" type="text" class="form-control" placeholder="Pincode">
+                                    <label for="">Pincode</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input required name="mobileNumber" formControlName="mobileNumber" type="text" class="form-control" placeholder="Mobile Number">
+                                    <label for="">Mobile Number</label>
+                                </div>
+                                <div>
+                                    <h2 >Total Price: <i class="fa-solid fa-indian-rupee-sign" style="color: #0c0d0d;"></i>{{cartTotalPrice}}</h2>
+                                </div>
+                                                            <!-- offers -->
+                            <div *ngIf="!discountStatus">
+                                <h5 (click)="offerClicked()"  style=" color: #fd0d0d; cursor: pointer;">Offers<i class="fa-solid fa-tag fa-beat-fade mx-2" style="color: #c11a1a;"></i></h5>
+                            </div>
+                            <!-- discount -->
+                            <div *ngIf="offerClick && !discountStatus">
+                                <!-- 10% -->
+                                <img (click)="discountCaculate(10)" width="100px"*ngIf="cartTotalPrice<=100"  src="https://www.nicepng.com/png/detail/396-3966505_10-percent-off-png-download-image-10-percent.png" alt="">
+                                <!-- 30 -->
+                                <img (click)="discountCaculate(30)" width="100px"*ngIf="cartTotalPrice>100 && cartTotalPrice<=500 " src="https://www.pngmart.com/files/21/30-Off-PNG-Image.png" alt="">
+                                <!-- 50 -->
+                                <img (click)="discountCaculate(50)" width="100px"*ngIf="cartTotalPrice>500 && cartTotalPrice<=1000 " src="https://e7.pngegg.com/pngimages/910/1008/png-clipart-customer-service-sales-50-off-s-company-text.png" alt="">
+                            </div>
+                                <div class="text-center m-3">
+                                     <button type="submit" class="btn btn-success">Make Payment</button>
+                                </div>
+                            </form>
+
+                          <!-- after the form has been submitted -->
+                            <div *ngIf="proceedToPaymentStatus">
+                            <h6>Your Delivery Address Details</h6>
+                            <p>{{name}}</p>
+                            <p>{{houseNumber}}</p>
+                            <p>{{streetName}}</p>
+                            <p>{{state}}</p>
+                            <p>{{pincode}}</p>
+                            <p>{{mobileNumber}}</p>
+                            <div (click)="makePay()" *ngIf="!showpaypalButton" class="text-center m-3">
+                                <button type="submit" class="btn btn-success">Proceed to Payment</button>
+                           </div>
+                           <div *ngIf="showpaypalButton">
+                            <ngx-paypal [config]="payPalConfig"></ngx-paypal>
+
+                           </div>
+                            </div>
+                            
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<!-- empty cart -->
+<div *ngIf="allCart.length==0" class="container text-center p-5">
+    <h1>Your Cart Was Empty....</h1>
+    <img src="https://cdn.dribbble.com/users/887568/screenshots/3172047/ufo.gif" alt="">
+    <div>
+        <button class="btn btn-dark">Shop Here</button>
+    </div>
+
+</div>
